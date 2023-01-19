@@ -8,12 +8,12 @@ use serde::*;
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use url::Url;
 
-make_error2!({{crate_name | upper_camel_case }}Error);
+make_error2!({{crate_name | replace_first: "lib_", "" | upper_camel_case }}Error);
 
 make_model23!(
-    Q{{crate_name | upper_camel_case }},
-    I{{crate_name | upper_camel_case }},
-    O{{crate_name | upper_camel_case }},
+    Q{{crate_name | replace_first: "lib_", "" | upper_camel_case }},
+    I{{crate_name | replace_first: "lib_", "" | upper_camel_case }},
+    O{{crate_name | replace_first: "lib_", "" | upper_camel_case }},
     name: String,
 );
 
@@ -21,18 +21,14 @@ make_model35!(
     Q,
     I,
     O,
-    {
-        {
-            crate_name
-        }
-    },
+    {{crate_name | replace_first: "lib_", ""}},
     name: String
 );
 
 make_app71!(
     [name: String],
     route,
-    "/{{crate_name}}",
+    "/{{crate_name | replace_first: "lib_", ""}}",
     "/{{crate_name | replace_first: "lib_", ""}}/{id}",
     "",
     "{id}",
@@ -55,7 +51,7 @@ async fn handle(
     s: actix_web::web::Data<my_state::MyState>,
     json: actix_web::web::Json<route::IRequest>,
     _: lib_wallet::QWallet,
-) -> Result<Q, {{crate_name | upper_camel_case }}Error> {
+) -> Result<Q, {{crate_name | replace_first: "lib_", "" | upper_camel_case }}Error> {
     tokio::spawn(async {
         tokio::time::sleep(std::time::Duration::from_secs(10)).await;
         tracing::info!("good day mat");
@@ -66,6 +62,6 @@ async fn handle(
     } else {
         product::postgres_query::insert(&s.sqlx_pool, &json.data)
             .await
-            .map_err({{crate_name | upper_camel_case }}Error::from_general)
+            .map_err({{crate_name | replace_first: "lib_", "" | upper_camel_case }}Error::from_general)
     }
 }
