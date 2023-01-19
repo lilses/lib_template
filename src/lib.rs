@@ -10,57 +10,36 @@ use url::Url;
 
 make_error2!({{crate_name | upper_camel_case }}Error);
 
-make_model23!(QProductPrice, IProductPrice, OProductPrice, name: String,);
+make_model23!(
+    Q{{crate_name | upper_camel_case }},
+    I{{crate_name | upper_camel_case }},
+    O{{crate_name | upper_camel_case }},
+    name: String,
+);
 
 make_model35!(
     Q,
     I,
     O,
-    product,
-    name: String,
-    price: bigdecimal::BigDecimal,
-    image: String,
-    pid: String,
-    uid: String,
-    currency: String,
-    url: String,
-    prices: sqlx::types::Json<Vec<IProductPrice>>,
-    macros: Option<sqlx::types::Json<IProductMacros>>,
-    price_list: Vec<String>,
-    size_list: Vec<String>,
-    created_at: chrono::DateTime<chrono::Utc>,
-    updated_at: chrono::DateTime<chrono::Utc>,
-    search: String,
-    indexed_at: Option<chrono::DateTime<chrono::Utc>>
+    {
+        {
+            crate_name
+        }
+    },
+    name: String
 );
 
 make_app71!(
-    [
-        name: String,
-        price: bigdecimal::BigDecimal,
-        image: String,
-        pid: String,
-        uid: String,
-        currency: String,
-        url: String,
-        prices: sqlx::types::Json<Vec<IProductPrice>>,
-        macros: Option<sqlx::types::Json<IProductMacros>>,
-        price_list: Vec<String>,
-        size_list: Vec<String>,
-        created_at: chrono::DateTime<chrono::Utc>,
-        updated_at: chrono::DateTime<chrono::Utc>,
-        search: String,
-        indexed_at: Option<chrono::DateTime<chrono::Utc>>
-    ],
+    [name: String],
     route,
-    "/product",
-    "/product/{id}",
+    "/{{crate_name}}",
+    "/{{crate_name | replace_first: "lib_", ""}}/{id}",
     "",
     "{id}",
     O,
     Q,
     I,
-    product,
+    {{crate_name}},
     [
         |s: actix_web::web::Data<my_state::MyState>,
          json: actix_web::web::Json<route::IRequest>,
@@ -76,7 +55,7 @@ async fn handle(
     s: actix_web::web::Data<my_state::MyState>,
     json: actix_web::web::Json<route::IRequest>,
     _: lib_wallet::QWallet,
-) -> Result<Q, ProductError> {
+) -> Result<Q, {{crate_name | upper_camel_case }}Error> {
     tokio::spawn(async {
         tokio::time::sleep(std::time::Duration::from_secs(10)).await;
         tracing::info!("good day mat");
@@ -87,6 +66,6 @@ async fn handle(
     } else {
         product::postgres_query::insert(&s.sqlx_pool, &json.data)
             .await
-            .map_err(ProductError::from_general)
+            .map_err({{crate_name | upper_camel_case }}Error::from_general)
     }
 }
