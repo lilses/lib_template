@@ -8,7 +8,7 @@ use serde::*;
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use url::Url;
 
-make_error2!(ProductError);
+make_error2!({{crate_name | upper_camel_case }}Error);
 
 make_model23!(QProductPrice, IProductPrice, OProductPrice, name: String,);
 
