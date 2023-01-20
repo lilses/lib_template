@@ -37,7 +37,7 @@ make_app71!(
     I,
     {{crate_name}},
     [
-        |s: actix_web::web::Data<my_state::MyState>,
+        |s: actix_web::web::Data<State>,
          json: actix_web::web::Json<route::IRequest>,
          wallet: lib_wallet::QWallet,
          http_request: actix_web::HttpRequest| async move { handle(s, json, wallet).await }
@@ -48,7 +48,7 @@ make_app71!(
 make_scope1!("product", [put, route]);
 
 async fn handle(
-    s: actix_web::web::Data<my_state::MyState>,
+    s: actix_web::web::Data<State>,
     json: actix_web::web::Json<route::IRequest>,
     _: lib_wallet::QWallet,
 ) -> Result<Q, {{crate_name | replace_first: "lib_", "" | upper_camel_case }}Error> {
